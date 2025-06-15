@@ -111,6 +111,37 @@ def get_chats():
         })
 
     return jsonify(history)
+@app.route('/health')
+def health_check():
+    try:
+        # Check Firebase Firestore connection
+        test = db.collection("chats").limit(1).stream()
+        _ = [doc.id for doc in test]  # Attempt to read
+
+        # Check Dialogflow connection
+        session_id = str(uuid.uuid4())
+        session_path = client.session_path(PROJECT_ID, session_id)
+        text_input = dialogflow.TextInput(text="Hello", language_code='en')
+        query_input = dialogflow.QueryInput(text=text_input)
+
+        response = client.detect_intent(request={
+            "session": session_path,
+            "query_input": query_input,
+        })
+
+        # Return OK if both succeed
+        return jsonify({
+            "status": "OK",
+            "firebase": True,
+            "dialogflow": True,
+            "dialogflow_reply": response.query_result.fulfillment_text
+        })
+    except Exception as e:
+        # Return error if any fails
+        return jsonify({
+            "status": "FAILED",
+            "error": str(e)
+        }), 500
 
 # === Main ===
 if __name__ == '__main__':
