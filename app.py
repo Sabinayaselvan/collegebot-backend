@@ -14,7 +14,8 @@ app = Flask(__name__)
 CORS(app)
 
 # === Configuration ===
-SERVICE_ACCOUNT_FILE = 'googlebot.json'  # Keep this in Render root folder
+SERVICE_ACCOUNT_FILE = '/etc/secrets/googlebot.json'
+  # Keep this in Render root folder
 PROJECT_ID = 'collegebot-9olk'
 KNOWLEDGE_BASE_ID = 'MTI1OTkxMzMwNDM1MDQ5NzE3Nzc'
 
